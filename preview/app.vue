@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="page" @mousemove="mousemove" @mouseup="mouseup">
     <div>
@@ -28,7 +26,16 @@
         :h="componentSize.height"
       >
         <div class="sizeTip">组件显示区域({{componentSize.width}}*{{componentSize.height}})</div>
-        <com v-bind="componentProps" ref="component"></com>
+        <div class="node" v-show="visible">
+          <com v-bind="componentProps" ref="component">
+            <div slot="default" class="node" style="height: 400px" :key='i' v-for="(o,i) in 1">
+              <example></example>
+            </div>
+          </com>
+        </div>
+        <div class="node">
+          <el-button style="z-index: 2; position: relative;" @click.native="openDrawer">打开</el-button>
+        </div>
       </vue-drag-resize>
       <div class="block editor" :style="editerStyle">
         <div class="title" @click="editerActive=true" @mousedown="mousedown" @mouseup="mouseup">编辑面板</div>
@@ -124,6 +131,7 @@
     },
     data () {
       return {
+        visible: true,
         // 开发过程的分辨率选项
         sizes: {
           'Mobile S': {
@@ -147,7 +155,7 @@
             height: 720
           }
         },
-        sizeIndex: 'Mobile S',
+        sizeIndex: 'Desktop',
         isInit: false, // 是否初始化完成
         editerActive: false, // 编辑面板是否要拖拽了
         componentSize: { // 组件当前的大小
@@ -155,7 +163,7 @@
           height: 480
         },
         editerPanel: {
-          x: 600,
+          x: 960,
           y: 0,
           active: false,
           org: {x: 0, y: 0},
@@ -163,29 +171,7 @@
         },
 
         // 组件开发的时候，配置传入的默认参数，按需修改，这里面的字段一般需要和  src/index.vue 里面的props的key保持一致
-        componentProps: {
-          reanderType: 'canvas',
-          packageType: 'common',
-          datasourcekey: '',
-          option: {
-            title: {
-              text: 'ECharts 入门示例'
-            },
-            tooltip: {},
-            legend: {
-              data: ['销量']
-            },
-            xAxis: {
-              data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-            },
-            yAxis: {},
-            series: [{
-              name: '销量',
-              type: 'bar',
-              data: [5, 20, 36, 10, 10, 20]
-            }]
-          }
-        },
+        componentProps: {},
       }
     },
     computed: {
@@ -202,6 +188,10 @@
       this.isInit = true
     },
     methods: {
+      openDrawer () {
+        debugger
+        this.$refs.component.open()
+      },
       mousedown: function (event) {
         this.editerPanel.org = {
           x: this.editerPanel.x,
